@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/qunit/git/qunit.css" type="text/css" media="screen"/>
+    <script type="text/javascript" src="http://code.jquery.com/qunit/git/qunit.js"></script>
+    <script type="text/javascript" src="../jquery.money.js"></script>
+    <script type="text/javascript" src="../lib/simulate-keypress.js"></script>
+    <script type="text/javascript" src="../lib/jquery.simulate.js"></script>
+
+    <script>
+        jQuery(function ($) {
+
+            createFieldAndAttachPlugin(1);
+            
+            triggerKeyEventsForString('#field1', "1234567890", 10, true, function () {
+                test("test with default values", function () {
+                    equal($('#field1').val(), "1,234,567,890");
+                });
+            })
+
+            createFieldAndAttachPlugin(2);
+            triggerKeyEventsForString('#field2', "123456789123456789", 10, true, function () {
+                test("test with big numbers", function () {
+                    equal($('#field2').val(), "123,456,789,123,456,789");
+                });
+            })
+
+            createFieldAndAttachPlugin(3);
+            triggerKeyEventsForString('#field3', "äbc123", 10, true, function () {
+                test("illegal chars", function () {
+                    equal($('#field3').val(), "123");
+                });
+            })
+
+            createFieldAndAttachPlugin(4);
+            triggerKeyEvents('#field4', 49 /* 1 */);
+            triggerKeyEvents('#field4', 50 /* 2 */);
+            triggerKeyEvents('#field4', 51 /* 3 */);
+            triggerKeyEvents('#field4', 50 /* 2 */);
+            triggerKeyEvents('#field4', 8 /* backspace */);
+
+            test("delete keys", function () {
+                equal($('#field4').val(), "123");
+            });
+
+            // Helper function to create a input field
+            function createFieldAndAttachPlugin(id) {
+                var e = $('<input id="field' + id + '" type="text">');
+                $('body').append(e);
+                e.money();
+                return e;
+            }
+        })
+
+
+    </script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit example</h1>
+
+<h2 id="qunit-banner"></h2>
+
+<div id="qunit-testrunner-toolbar"></div>
+<h2 id="qunit-userAgent"></h2>
+<ol id="qunit-tests"></ol>
+<div id="qunit-fixture">test markup, will be hidden</div>
+</body>
+</html>
